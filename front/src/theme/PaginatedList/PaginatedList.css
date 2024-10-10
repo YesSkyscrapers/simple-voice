@@ -1,0 +1,24 @@
+.ListContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.PaginatedListLoader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px;
+}
+
+.ListContainerLoadFromStart {
+    font-size: 17px;
+    color: rgba(20, 20, 20, 0.8);
+    padding: 8px;
+    background-color: rgba(220, 220, 220, 0.15);
+}
+
+.ListContainerLoadFromStartContent {
+    justify-content: center;
+    align-items: center;
+}

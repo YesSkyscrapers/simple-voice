@@ -1,0 +1,46 @@
+.ScreenContainer {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 45px);
+    padding-top: 45px;
+}
+
+.MaxFlexContainer {
+    display: flex;
+    flex: 1;
+}
+
+.Center {
+    justify-content: center;
+    align-items: center;
+}
+
+.MainCenter {
+    justify-content: center;
+}
+
+.Border {
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.Button {
+    cursor: default;
+}
+
+.VerticalDirectional {
+    display: flex;
+    flex-direction: column;
+}
+
+.MainButton {
+    font-size: 17px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 16px;
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+    padding: 4px 16px;
+}

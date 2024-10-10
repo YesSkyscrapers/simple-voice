@@ -1,0 +1,35 @@
+{
+    "name": "simple_voice_back",
+    "version": "1.0.0",
+    "description": "Simbple Voice Backend",
+    "devDependencies": {
+        "@playwright/test": "^1.46.0",
+        "@types/node": "^18.7.16",
+        "ts-node": "3.3.0",
+        "typescript": "3.3.3333"
+    },
+    "dependencies": {
+        "@types/ws": "^8.5.12",
+        "axios": "^1.7.3",
+        "bcryptjs": "^2.4.3",
+        "firebase-admin": "^12.4.0",
+        "form-data": "^4.0.0",
+        "formidable": "2",
+        "http-proxy": "git+https://github.com/http-party/node-http-proxy.git",
+        "moment": "^2.29.1",
+        "mysql": "^2.14.1",
+        "nightmare": "^3.0.2",
+        "node-fetch": "2.6.1",
+        "playwright": "^1.46.0",
+        "puppeteer": "^23.0.2",
+        "reflect-metadata": "^0.1.10",
+        "skyes": "https://github.com/YesSkyscrapers/skyes",
+        "typeorm": "0.2.32",
+        "uuid": "^9.0.1",
+        "uuidv4": "^6.2.13",
+        "ws": "^8.18.0"
+    },
+    "scripts": {
+        "start": "yarn ts-node index.ts"
+    }
+}

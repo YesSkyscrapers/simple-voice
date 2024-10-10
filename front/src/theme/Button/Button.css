@@ -1,0 +1,22 @@
+.Button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ButtonContentHidden {
+    opacity: 0;
+}
+
+.ButtonLoader {
+    align-self: center;
+    position: absolute;
+}
+
+.ButtonContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    flex: 1;
+    align-items: center;
+}

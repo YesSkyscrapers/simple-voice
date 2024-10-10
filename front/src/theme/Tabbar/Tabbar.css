@@ -1,0 +1,43 @@
+.Container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.Header {
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px;
+}
+
+.HeaderTitle {
+    display: flex;
+    font-size: 17px;
+    padding: 0px 16px;
+}
+
+.HeaderTitleSelected {
+    font-weight: bold;
+}
+
+.HeaderTitleLeftBorder {
+    border-style: solid;
+    border-color: black;
+    border-width: 0px;
+    border-left-width: 1px;
+}
+
+.TabbatContentContainer {
+    display: flex;
+    flex: 1;
+}
+
+.TabbarContent {
+    display: flex;
+    flex: 1;
+}
+
+.TabbarContentHidden {
+    display: none;
+}

@@ -1,0 +1,1 @@
+PUBLIC_URL=/simplevoice yarn build && yarn serve -s build -l $1

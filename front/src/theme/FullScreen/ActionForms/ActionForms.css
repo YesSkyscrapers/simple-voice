@@ -1,0 +1,35 @@
+.PopupOverlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    pointer-events: fill;
+}
+
+.ActionPopup {
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    background-color: white;
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ActionPopupTitle {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.ActionPopupText {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.ActionPopupButtons {
+    flex-direction: row;
+    display: flex;
+}
+
+.ActionPopupButton {
+    padding: 8px 16px;
+}
