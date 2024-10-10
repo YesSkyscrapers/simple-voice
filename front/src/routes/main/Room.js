@@ -6,6 +6,8 @@ import { CHANNEL_TYPES } from '../../store/constants/appConstants'
 import ReactPlayer from 'react-player'
 import { useAudioStream } from './tools'
 import moment from 'moment'
+import { store } from '../../store/store'
+import { showError } from '../../store/actions/appActions'
 
 const createWSSocket = (welcomeMessage) => {
     return new Promise((resolve) => {
@@ -229,8 +231,16 @@ const Room = ({ roomId, login }) => {
         asyncFunc()
     }, [])
 
+    const onShare = useCallback(() => {
+        navigator.clipboard.writeText(`http://localhost:3000/?roomid=${roomId}`)
+        store.dispatch(showError('Скопировано!'))
+    }, [])
+
     return (
         <div className="Room">
+            <Button main onPress={onShare}>
+                Поделиться
+            </Button>
             {players.map((player) => {
                 return (
                     <PlayerItem

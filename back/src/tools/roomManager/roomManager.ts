@@ -66,12 +66,19 @@ const getRoomMates = (userId) => {
     }
 }
 
+const checkName = (name) => {
+    return !!storage.find((room) => {
+        return !!room.users.find((user) => user.login == name)
+    })
+}
+
 const roomManager = {
     create,
     getList,
     join,
     remove,
-    getRoomMates
+    getRoomMates,
+    checkName
 }
 
 export default roomManager

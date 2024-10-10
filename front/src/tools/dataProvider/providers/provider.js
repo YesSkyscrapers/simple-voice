@@ -25,6 +25,15 @@ const provider = {
                 login
             }
         })
+    },
+    checkName: (name) => {
+        return makeAction({
+            url: getDefaultActionUrl(config.api),
+            action: 'name.check',
+            data: {
+                name
+            }
+        })
     }
 }
 

@@ -15,11 +15,17 @@ const ListItem = ({ item, onSelectRoom }) => {
     )
 }
 
-const ListRooms = ({ onSelectRoom }) => {
+const ListRooms = ({ onSelectRoom, preferRoomId }) => {
     const [list, setList] = useState([])
 
     useEffect(() => {
-        dataProvider.getList().then(setList)
+        dataProvider.getList().then((list) => {
+            setList(list)
+
+            if (preferRoomId) {
+                onSelectRoom(preferRoomId)
+            }
+        })
     }, [])
 
     const onCreate = useCallback((setLoader) => {
