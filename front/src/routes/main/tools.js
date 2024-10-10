@@ -10,7 +10,7 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
             stream.current = await navigator.mediaDevices.getUserMedia({
                 audio: {
                     autoGainControl: false,
-                    channelCount: 2,
+                    channelCount: 4,
                     echoCancellation: false,
                     noiseSuppression: false
                 }
@@ -19,7 +19,7 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
             recorder.ondataavailable = (e) => {
                 sendBlob(e.data)
             }
-            recorder.start(1000)
+            recorder.start(200)
 
             // setTimeout(() => {
             //     recorder.stop()

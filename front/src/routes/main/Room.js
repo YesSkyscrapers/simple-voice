@@ -5,6 +5,7 @@ import dataProvider from '../../tools/dataProvider/dataProvider'
 import { CHANNEL_TYPES } from '../../store/constants/appConstants'
 import ReactPlayer from 'react-player'
 import { useAudioStream } from './tools'
+import moment from 'moment'
 
 const createWSSocket = (welcomeMessage) => {
     return new Promise((resolve) => {
@@ -19,20 +20,55 @@ const createWSSocket = (welcomeMessage) => {
 }
 
 const PlayerItem = ({ volume, login, url }) => {
+    const [currentUrl, setCurrentUrl] = useState(null)
+    const currentUrlRef = useRef(null)
     const playerRef = useRef(null)
-    const pos = useRef(0)
+    let currentTime = useRef(0)
+    let startTime = useRef(null)
     const onPlay = useCallback(() => {
-        console.log('onPlay', pos.current)
-        playerRef.current.seekTo(pos.current, 'seconds')
-        pos.current = pos.current + 1
+        if (startTime.current == null) {
+            startTime.current = moment()
+        } else {
+            console.log('onPlay', currentTime.current, moment().diff(startTime.current, 'milliseconds') / 1000)
+            playerRef.current.seekTo(moment().diff(startTime.current, 'milliseconds') / 1000, 'seconds')
+        }
     }, [])
+
+    const onEnded = useCallback(() => {}, [])
+
+    useEffect(() => {
+        currentTime.current = playerRef.current.getCurrentTime()
+
+        setCurrentUrl(url)
+        currentUrlRef.current = url
+    }, [url])
+
+    useEffect(() => {
+        console.log('currentUrl', currentUrl)
+    }, [currentUrl])
+
+    const onReady = useCallback(() => {}, [])
+
     return (
         <div>
             <ReactPlayer
-                url={url}
+                url={currentUrl}
                 playing
                 volume={volume}
                 ref={playerRef}
+                onReady={(e) => onReady(e)}
+                // onStart={(e) => console.log('onStart', playerRef.current.getCurrentTime())}
+                // onProgress={(e) => onDuration(e)}
+                // onPause={(e) => console.log('onPause', playerRef.current.getCurrentTime())}
+                // onBuffer={(e) => console.log('onBuffer', playerRef.current.getCurrentTime())}
+                // onBufferEnd={(e) => console.log('onBufferEnd', playerRef.current.getCurrentTime())}
+                // onSeek={(e) => console.log('onSeek', playerRef.current.getCurrentTime())}
+                // onPlaybackRateChange={(e) => console.log('onPlaybackRateChange', playerRef.current.getCurrentTime())}
+                // onPlaybackQualityChange={(e) =>
+                //     console.log('onPlaybackQualityChange', playerRef.current.getCurrentTime())
+                // }
+                onError={(e) => console.log('onError', e)}
+                onEnded={onEnded}
                 onPlay={() => {
                     onPlay()
                 }}
@@ -66,30 +102,36 @@ const Room = ({ roomId, login }) => {
 
                 let blob = blobs[_login]
 
-                let generatedUrl = false
-
                 inst.onmessage = (data) => {
-                    console.log('got data')
-
                     blob.push(data.data)
 
-                    if (!generatedUrl) {
-                        generatedUrl = true
-                        let blob1 = new Blob(blob, { type: 'audio/webm' })
-                        let url = URL.createObjectURL(blob1)
+                    let blob1 = new Blob(blob, { type: 'audio/webm' })
+                    let url = URL.createObjectURL(blob1)
+                    console.log('got data')
 
-                        setPlayers((prev) => {
-                            return prev
-                                .filter((item) => item.login != _login)
-                                .concat([
-                                    {
-                                        url: url,
-                                        volume: 1,
-                                        login: _login
+                    setPlayers((prev) => {
+                        let exists = prev.find((item) => item.login == _login)
+                        if (exists) {
+                            return prev.map((item) => {
+                                if (item.login == _login) {
+                                    return {
+                                        ...item,
+                                        url: url
                                     }
-                                ])
-                        })
-                    }
+                                } else {
+                                    return item
+                                }
+                            })
+                        } else {
+                            return prev.concat([
+                                {
+                                    url: url,
+                                    volume: 1,
+                                    login: _login
+                                }
+                            ])
+                        }
+                    })
                 }
             }
 
@@ -122,7 +164,7 @@ const Room = ({ roomId, login }) => {
                 Stop
             </Button>
             {players.map((player) => {
-                return <PlayerItem key={player.url} url={player.url} volume={player.volume} login={player.login} />
+                return <PlayerItem key={player.login} url={player.url} volume={player.volume} login={player.login} />
             })}
         </div>
     )
