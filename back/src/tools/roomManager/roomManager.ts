@@ -21,23 +21,29 @@ const join = (roomId, userId, login) => {
     let room = storage.find((item) => item.id == roomId)
     let existsUser = room.users.find((user) => user.id == userId)
     if (!existsUser) {
-        let usersIdsForNotify = room.users.map((user) => user.id)
-
         room.users.push({
             id: userId,
             login: login
         })
-        let fullUsers = usersManager.getUsersByIds(usersIdsForNotify)
-        for (let user of fullUsers) {
-            try {
-                user.events.send(login)
-            } catch (err) {
-                console.log(err)
-            }
-        }
     }
 
-    return room
+    usersManager.clearInOutByIds(room.users.map((user) => user.id))
+    let usersIdsForNotify = room.users.map((user) => user.id)
+
+    let fullUsers = usersManager.getUsersByIds(usersIdsForNotify)
+
+    for (let user of fullUsers) {
+        try {
+            user.events.send(
+                JSON.stringify({
+                    action: 'RECREATE',
+                    payload: room
+                })
+            )
+        } catch (err) {
+            console.log(err)
+        }
+    }
 }
 
 const remove = (login) => {
@@ -45,6 +51,7 @@ const remove = (login) => {
         let existUser = item.users.find((item) => item.login == login)
         item.users = item.users.filter((item) => item != existUser)
     })
+    storage = storage.filter((room) => room.users.length != 0)
 }
 
 const getRoomMates = (userId) => {

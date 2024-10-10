@@ -60,3 +60,22 @@
     justify-content: flex-start;
     color: black;
 }
+
+.playerItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.playerItemInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    height: 50px;
+}
+
+.playerItemInfoInput {
+    width: 30px;
+}

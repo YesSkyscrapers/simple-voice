@@ -12,10 +12,10 @@ export const joinRoom = async ({ httpRequest, request, httpResponse, response })
 
     try {
         let userId = usersManager.getUserIdFromLogin(data.login)
-        let room = roomManager.join(data.roomId, userId, data.login)
+        roomManager.join(data.roomId, userId, data.login)
 
         response.body = {
-            room
+            ok: true
         }
     } catch (err) {
         console.log(err)

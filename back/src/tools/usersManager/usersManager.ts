@@ -59,16 +59,46 @@ const getUserIdFromLogin = (login) => {
     return user ? user.id : null
 }
 
+const clearInOutByIds = (ids: Array<any>) => {
+    users = users.map((user) => {
+        if (ids.includes(user.id)) {
+            if (user.out) {
+                try {
+                    user.out.close()
+                } catch (err) {}
+            }
+            if (user.ins) {
+                Object.values(user.ins).forEach((connection: any) => {
+                    try {
+                        connection.close()
+                    } catch (err) {}
+                })
+            }
+
+            return {
+                ...user,
+                out: null,
+                ins: {}
+            }
+        } else {
+            return user
+        }
+    })
+}
+
 const getUsersByIds = (ids: Array<any>) => {
     if (ids.length == 0) {
         return []
     } else {
-        return users.filter((user) => ids.includes(user.id))
+        return users.filter((user) => {
+            return ids.includes(user.id)
+        })
     }
 }
 
 export default {
     enrichUserInfo,
     getUserIdFromLogin,
-    getUsersByIds
+    getUsersByIds,
+    clearInOutByIds
 }

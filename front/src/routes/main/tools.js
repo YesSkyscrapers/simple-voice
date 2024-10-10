@@ -16,6 +16,7 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
                 }
             })
             recorder = new MediaRecorder(stream.current)
+
             recorder.ondataavailable = (e) => {
                 sendBlob(e.data)
             }
@@ -29,9 +30,11 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
         }
     }
     const stopStream = () => {
-        stream.current.getTracks().forEach(function (track) {
-            track.stop()
-        })
+        if (stream.current) {
+            stream.current.getTracks().forEach(function (track) {
+                track.stop()
+            })
+        }
     }
 
     return {
