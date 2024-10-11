@@ -22,7 +22,16 @@ const ListRooms = ({ onSelectRoom, preferRoomId }) => {
         dataProvider.getList().then((list) => {
             setList(list)
 
-            console.log(list)
+            if (preferRoomId) {
+                let exists = list.find((item) => item.id == preferRoomId)
+                if (exists) {
+                    onSelectRoom(preferRoomId)
+                } else {
+                    dataProvider.create(preferRoomId).then((response) => {
+                        onSelectRoom(response.id)
+                    })
+                }
+            }
         })
     }, [])
 

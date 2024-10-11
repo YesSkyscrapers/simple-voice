@@ -13,6 +13,8 @@ const create = (prefId) => {
                 id: prefId,
                 users: []
             })
+
+            return prefId
         }
     } else {
         let id = globalId++

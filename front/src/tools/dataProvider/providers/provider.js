@@ -9,11 +9,13 @@ const provider = {
             data: {}
         })
     },
-    create: () => {
+    create: (prefId) => {
         return makeAction({
             url: getDefaultActionUrl(config.api),
             action: 'room.create',
-            data: {}
+            data: {
+                prefId
+            }
         })
     },
     join: (roomId, login) => {
