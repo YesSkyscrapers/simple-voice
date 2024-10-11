@@ -30,7 +30,6 @@ const runApp = async () => {
     websocket.init()
 
     skyes.init({
-        ormconfig: ormconfig as any,
         serverConfig: serverConfig
     })
 }

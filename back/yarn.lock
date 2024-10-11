@@ -2707,7 +2707,7 @@ single-line-log@^1.1.2:
 
 "skyes@https://github.com/YesSkyscrapers/skyes":
   version "2.3.12"
-  resolved "git+ssh://git@github.com/YesSkyscrapers/skyes.git#7793e4b4241888c8049c2bc3498ecf81abe98cd0"
+  resolved "https://github.com/YesSkyscrapers/skyes#7793e4b4241888c8049c2bc3498ecf81abe98cd0"
   dependencies:
     esm "^3.2.25"
     mime-types "^2.1.30"
