@@ -1,4 +1,4 @@
-const host = 'http://localhost:8777'
+const host = 'https://yessky.ru/simplevoiceback'
 
 const config = {
     api: host + ''
