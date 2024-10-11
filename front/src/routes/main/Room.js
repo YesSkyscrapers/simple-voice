@@ -11,9 +11,16 @@ import { showError } from '../../store/actions/appActions'
 
 const createWSSocket = (welcomeMessage) => {
     return new Promise((resolve) => {
-        const ws = new WebSocket('ws://yessky.ru/simplevoiceweb')
+        const ws = new WebSocket('wss://yessky.ru/simplevoiceweb/')
+        ws.onclose = (e) => {
+            console.log('onClose', e)
+        }
 
+        ws.onerror = (e) => {
+            console.log('error', e)
+        }
         ws.onopen = () => {
+            console.log('onOpen')
             ws.send(welcomeMessage)
 
             resolve(ws)

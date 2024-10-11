@@ -1,4 +1,6 @@
-const CACHE_KEYS = {}
+const CACHE_KEYS = {
+    STASH: 'STASH'
+}
 
 const load = (key) => {
     try {

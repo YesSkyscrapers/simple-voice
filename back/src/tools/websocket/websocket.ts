@@ -1,13 +1,22 @@
 import { WebSocketServer } from 'ws'
+import { createServer } from 'https'
 import usersManager from '../usersManager/usersManager'
 import { CHANNEL_TYPES } from '../../constants/constants'
 import roomManager from '../roomManager/roomManager'
+import { readFileSync } from 'fs'
 
 let server: WebSocketServer = null
 
 const init = () => {
+    // const _server = createServer({
+    //     cert: readFileSync('/etc/nginx/ssl/yessky.ru.crt'),
+    //     key: readFileSync('/etc/nginx/ssl/yessky.ru.key')
+    // })
     server = new WebSocketServer({ port: 8778 })
-
+    server.on('error', console.log)
+    server.on('listening', (e) => {
+        console.log('listenings', e)
+    })
     server.on('connection', function connection(connection) {
         let isConnected = false
         let login = null
@@ -62,6 +71,8 @@ const init = () => {
             }
         })
     })
+
+    // _server.listen(8778, '0.0.0.0')
 }
 
 export default {
