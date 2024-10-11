@@ -11,7 +11,7 @@ import { showError } from '../../store/actions/appActions'
 
 const createWSSocket = (welcomeMessage) => {
     return new Promise((resolve) => {
-        const ws = new WebSocket('ws://localhost:8778')
+        const ws = new WebSocket('ws://yessky.ru/simplevoiceweb')
 
         ws.onopen = () => {
             ws.send(welcomeMessage)
@@ -232,7 +232,7 @@ const Room = ({ roomId, login }) => {
     }, [])
 
     const onShare = useCallback(() => {
-        navigator.clipboard.writeText(`http://localhost:3000/?roomid=${roomId}`)
+        navigator.clipboard.writeText(`https://yessky.ru/simplevoice/?roomid=${roomId}`)
         store.dispatch(showError('Скопировано!'))
     }, [])
 
