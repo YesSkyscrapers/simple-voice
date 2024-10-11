@@ -3,14 +3,26 @@ import usersManager from '../usersManager/usersManager'
 let globalId = 0
 let storage = []
 
-const create = () => {
-    let id = globalId++
-    storage.push({
-        id,
-        users: []
-    })
+const create = (prefId) => {
+    if (prefId) {
+        let exists = storage.find((item) => item.id == prefId)
+        if (exists) {
+            throw 'Exists room'
+        } else {
+            storage.push({
+                id: prefId,
+                users: []
+            })
+        }
+    } else {
+        let id = globalId++
+        storage.push({
+            id,
+            users: []
+        })
 
-    return id
+        return id
+    }
 }
 
 const getList = () => {

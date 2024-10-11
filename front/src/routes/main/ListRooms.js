@@ -22,9 +22,7 @@ const ListRooms = ({ onSelectRoom, preferRoomId }) => {
         dataProvider.getList().then((list) => {
             setList(list)
 
-            if (preferRoomId) {
-                onSelectRoom(preferRoomId)
-            }
+            console.log(list)
         })
     }, [])
 
