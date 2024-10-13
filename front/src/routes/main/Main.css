@@ -79,3 +79,9 @@
 .playerItemInfoInput {
     width: 30px;
 }
+
+.dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+}

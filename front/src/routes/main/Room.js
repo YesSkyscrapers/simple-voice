@@ -32,6 +32,7 @@ const createWSSocket = (welcomeMessage) => {
 const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
     const [currentUrl, setCurrentUrl] = useState(url)
     const [volumeText, setVolumeText] = useState(`${volume * 10}`)
+    const [isPlaying, setIsPlaying] = useState(false)
     // // const currentUrlRef = useRef(null)
     const playerRef = useRef(null)
     // let isFirstRun = useRef(true)
@@ -39,6 +40,7 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
     let startTime = useRef(null)
     const onPlay = useCallback(() => {
         // console.log('onPlay')
+        setIsPlaying(true)
         let tick = () => {
             if (startTime.current == null) {
                 startTime.current = moment()
@@ -51,7 +53,9 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
         setInterval(tick, 60000)
     }, [])
 
-    // // const onEnded = useCallback(() => {}, [])
+    const onPause = useCallback(() => {
+        setIsPlaying(false)
+    }, [])
 
     // useEffect(() => {
     //     if (isFirstRun.current) {
@@ -97,7 +101,7 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
                 // // onReady={(e) => onReady(e)}
                 onStart={(e) => console.log('onStart', playerRef.current.getCurrentTime())}
                 // // onProgress={(e) => onDuration(e)}
-                onPause={(e) => console.log('onPause', playerRef.current.getCurrentTime())}
+                onPause={onPause}
                 onBuffer={(e) => console.log('onBuffer', playerRef.current.getCurrentTime())}
                 onBufferEnd={(e) => console.log('onBufferEnd', playerRef.current.getCurrentTime())}
                 // onSeek={(e) => console.log('onSeek', playerRef.current.getCurrentTime())}
@@ -114,6 +118,7 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
                 }}
             />
             <div className="playerItemInfo">
+                <span className="dot" style={{ backgroundColor: isPlaying ? 'green' : 'red' }} />
                 <span>{`Имя: ${login} Громкость: `}</span>
                 <TextInput className={'playerItemInfoInput'} value={volumeText} onChangeText={onChangeVolumeCallback} />
                 <span>{`(Меняется от 0 до 10)`}</span>
