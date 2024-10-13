@@ -12,7 +12,7 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
                     autoGainControl: false,
                     channelCount: 4,
                     echoCancellation: false,
-                    noiseSuppression: false
+                    noiseSuppression: true
                 }
             })
             recorder = new MediaRecorder(stream.current)
@@ -20,7 +20,7 @@ export const useAudioStream = (sendBlob, timeSlice = 500) => {
             recorder.ondataavailable = (e) => {
                 sendBlob(e.data)
             }
-            recorder.start(200)
+            recorder.start(100)
 
             // setTimeout(() => {
             //     recorder.stop()

@@ -1,5 +1,6 @@
 const CACHE_KEYS = {
-    STASH: 'STASH'
+    STASH: 'STASH',
+    VOLUMES: 'VOLUMES'
 }
 
 const load = (key) => {

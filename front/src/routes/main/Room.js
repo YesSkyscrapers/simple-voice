@@ -8,6 +8,7 @@ import { useAudioStream } from './tools'
 import moment from 'moment'
 import { store } from '../../store/store'
 import { showError } from '../../store/actions/appActions'
+import cacheManager, { CACHE_KEYS } from '../../tools/cacheManager'
 
 const createWSSocket = (welcomeMessage) => {
     return new Promise((resolve) => {
@@ -30,7 +31,7 @@ const createWSSocket = (welcomeMessage) => {
 
 const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
     const [currentUrl, setCurrentUrl] = useState(url)
-    const [volumeText, setVolumeText] = useState(`${volume}`)
+    const [volumeText, setVolumeText] = useState(`${volume * 10}`)
     // // const currentUrlRef = useRef(null)
     const playerRef = useRef(null)
     // let isFirstRun = useRef(true)
@@ -72,8 +73,14 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
     const onChangeVolumeCallback = useCallback(
         (text) => {
             setVolumeText(text)
-            let value = Number(text)
-            onVolumeChange(login, value == NaN ? 0 : value > 1 ? 1 : value < 0 ? 0 : value)
+            try {
+                if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(Number(text))) {
+                    console.log(Number(text) / 10)
+                    let volumes = cacheManager.load(CACHE_KEYS.VOLUMES)
+                    cacheManager.save(CACHE_KEYS.VOLUMES, { ...volumes, [login]: Number(text) / 10 })
+                    onVolumeChange(login, Number(text) / 10)
+                }
+            } catch (err) {}
         },
         [onVolumeChange, login]
     )
@@ -109,7 +116,7 @@ const PlayerItem = ({ volume, login, url, onVolumeChange }) => {
             <div className="playerItemInfo">
                 <span>{`Имя: ${login} Громкость: `}</span>
                 <TextInput className={'playerItemInfoInput'} value={volumeText} onChangeText={onChangeVolumeCallback} />
-                <span>{`(Меняется от 0 до 1)`}</span>
+                <span>{`(Меняется от 0 до 10)`}</span>
             </div>
         </div>
     )
@@ -186,10 +193,12 @@ const Room = ({ roomId, login }) => {
                             }
                         })
                     } else {
+                        let volumes = cacheManager.load(CACHE_KEYS.VOLUMES)
+                        let volume = volumes[_login] ? volumes[_login] : 1
                         return prev.concat([
                             {
                                 url: url,
-                                volume: 1,
+                                volume: volume,
                                 login: _login
                             }
                         ])
