@@ -1,17 +1,24 @@
 import { WebSocketServer } from 'ws'
-import { createServer } from 'https'
-import usersManager from '../usersManager/usersManager'
-import { CHANNEL_TYPES } from '../../constants/constants'
-import roomManager from '../roomManager/roomManager'
-import { readFileSync } from 'fs'
+import roomOrc from '../roomOrc/roomOrc'
+import { entityManager, FilterTypes } from 'skyes'
+import { Device } from '../../entity/Device'
+
+const ACTIONS = {
+    CONNECT: 1,
+    CONNECTED_SUCCESS: 2,
+    CALL_UPDATE_ROOM_LIST: 3,
+    UPDATE_ROOM_LIST: 4,
+    JOIN_ROOM: 5,
+    UPDATE_USERS_LIST: 6,
+    CALL_UPDATE_USERS_LOGINS: 7,
+    UPDATE_USERS_LOGINS: 8
+}
 
 let server: WebSocketServer = null
 
+let connections = {}
+
 const init = () => {
-    // const _server = createServer({
-    //     cert: readFileSync('/etc/nginx/ssl/yessky.ru.crt'),
-    //     key: readFileSync('/etc/nginx/ssl/yessky.ru.key')
-    // })
     server = new WebSocketServer({ port: 8778 })
     server.on('error', console.log)
     server.on('listening', (e) => {
@@ -19,62 +26,79 @@ const init = () => {
     })
     server.on('connection', function connection(connection) {
         let isConnected = false
-        let login = null
-        let type = null
-        let forUser = null
         let userId = null
 
         connection.on('error', (err) => {
             if (isConnected) {
-                usersManager.enrichUserInfo(login, null, type, forUser)
+                connections[userId] = null
+                roomOrc.left(userId)
             }
             connection.close()
         })
 
         connection.on('close', () => {
             if (isConnected) {
-                usersManager.enrichUserInfo(login, null, type, forUser)
+                connections[userId] = null
+                roomOrc.left(userId)
             }
         })
 
         connection.on('message', (data) => {
-            if (!isConnected) {
-                let splitedData = data.toString().split(':')
-                login = splitedData[0]
-                type = Number(splitedData[1])
-                if (type == CHANNEL_TYPES.AUDIO_IN) {
-                    forUser = splitedData[2]
-                }
-                usersManager.enrichUserInfo(login, connection, type, forUser)
-                userId = usersManager.getUserIdFromLogin(login)
-                isConnected = true
-            } else {
-                // найти свою комнату, перебрать всех юзеров и отправить на них данные
-                try {
-                    let users = roomManager.getRoomMates(userId)
-                    let fullUsers = usersManager.getUsersByIds(users.map((user) => user.id))
-                    let usersForSend = fullUsers
-                        .map((fullUser) => {
-                            return fullUser && fullUser.ins && fullUser.ins[login] ? fullUser.ins[login] : null
-                        })
-                        .filter((item) => !!item)
-                    usersForSend.forEach((userConnection) => {
-                        try {
-                            userConnection.send(data)
-                        } catch (err) {
-                            console.log('2', err)
+            try {
+                let parsed = JSON.parse(data.toString())
+
+                if (isConnected) {
+                    switch (parsed.action) {
+                        case ACTIONS.CALL_UPDATE_ROOM_LIST: {
+                            send(userId, ACTIONS.UPDATE_ROOM_LIST, roomOrc.getRooms())
+                            break
                         }
-                    })
-                } catch (err) {
-                    console.log('1', err)
+                        case ACTIONS.JOIN_ROOM: {
+                            roomOrc.join(parsed.payload, userId)
+                            break
+                        }
+                        case ACTIONS.CALL_UPDATE_USERS_LOGINS: {
+                            entityManager
+                                .read(Device, { pageIndex: 0, pageSize: parsed.payload.length }, [
+                                    { type: FilterTypes.IN, key: 'id', value: [parsed.payload] }
+                                ])
+                                .then((result) => {
+                                    if (result.data.length > 0) {
+                                        send(userId, ACTIONS.UPDATE_USERS_LOGINS, result.data)
+                                    }
+                                })
+                            break
+                        }
+                    }
+                } else {
+                    if (parsed.action == ACTIONS.CONNECT) {
+                        let connectionUserId = parsed.payload
+                        isConnected = true
+                        userId = connectionUserId
+                        connections[connectionUserId] = connection
+
+                        send(userId, ACTIONS.CONNECTED_SUCCESS)
+                    }
                 }
-            }
+            } catch (err) {}
         })
     })
+}
 
-    // _server.listen(8778, '0.0.0.0')
+const send = (targetId, action, payload = null) => {
+    try {
+        connections[targetId].send(
+            JSON.stringify({
+                action,
+                payload: payload ? payload : null
+            })
+        )
+    } catch (err) {}
 }
 
 export default {
-    init
+    init,
+    send
 }
+
+export { ACTIONS }

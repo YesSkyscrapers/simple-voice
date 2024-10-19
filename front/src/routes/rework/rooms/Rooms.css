@@ -1,0 +1,52 @@
+.gridButtonsContainer {
+    padding: 16px;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.gridButton {
+    flex: 1;
+    padding: 16px;
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 16px;
+    aspect-ratio: 1;
+    justify-content: center;
+    align-items: center;
+    margin: 16px;
+}
+
+.roomcontainer {
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.gridButtonImage {
+    width: fit-content;
+    max-width: 150px;
+    max-height: 150px;
+    height: fit-content;
+}
+
+.gridButtonContent {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.warningInGrid {
+    position: absolute;
+    top: 50px;
+    color: orange;
+}
+
+.roomsContainer {
+    flex-direction: column;
+    flex: 1;
+    padding: 16px;
+}

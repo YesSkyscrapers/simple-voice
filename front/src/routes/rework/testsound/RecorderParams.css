@@ -1,0 +1,23 @@
+.paramValue {
+    width: 24px;
+    height: 24px;
+}
+
+.paramsContainer {
+    margin: 16px;
+    padding: 8px;
+    flex-direction: column;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    border-radius: 16px;
+}
+
+.paramName {
+    flex: 1;
+    margin-right: 16px;
+}
+
+.paramRow {
+    padding: 8px;
+}

@@ -4,7 +4,7 @@ body {
         'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #080808;
+    background-color: black;
     color: #fff;
 }
 
@@ -19,6 +19,8 @@ code {
 
 .maxheight {
     height: 100vh;
+    display: flex;
+    flex: 1;
 }
 
 html {
@@ -27,5 +29,33 @@ html {
 }
 
 #root {
-    background-color: white;
+    background-color: black;
+}
+
+div {
+    display: flex;
+}
+
+.center {
+    justify-content: center;
+    align-items: center;
+}
+
+.border {
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: #fff;
+    border-style: solid;
+}
+
+.defaultPadding {
+    padding: 16px;
+}
+
+.flex {
+    flex: 1;
+}
+
+.vertical {
+    flex-direction: column;
 }

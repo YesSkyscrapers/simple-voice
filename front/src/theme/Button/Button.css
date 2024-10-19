@@ -19,4 +19,9 @@
     justify-content: stretch;
     flex: 1;
     align-items: center;
+    justify-content: center;
+}
+
+.ButtonDisabled {
+    opacity: 0.5;
 }

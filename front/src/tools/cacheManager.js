@@ -1,6 +1,8 @@
 const CACHE_KEYS = {
+    AUTH: 'AUTH',
     STASH: 'STASH',
-    VOLUMES: 'VOLUMES'
+    VOLUMES: 'VOLUMES',
+    AUDIO_PARAMS: 'AUDIO_PARAMS'
 }
 
 const load = (key) => {

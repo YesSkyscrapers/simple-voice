@@ -1,14 +1,14 @@
 import { skyes, entityManager, PaginationSettings, Filters, FilterTypes } from 'skyes'
-import roomManager from '../tools/roomManager/roomManager'
+import { Device } from '../entity/Device'
+import { v4 } from 'uuid'
+import roomOrc from '../tools/roomOrc/roomOrc'
 
-interface Params {
-    prefId: any
-}
+interface Params {}
 
 export const createRoom = async ({ httpRequest, request, httpResponse, response }) => {
     const data: Params = request.body.data
 
     response.body = {
-        id: roomManager.create(data.prefId)
+        roomId: roomOrc.create()
     }
 }

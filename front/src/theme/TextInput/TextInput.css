@@ -5,7 +5,9 @@
     padding: 4px 4px;
     border-width: 0px;
     outline: none;
-    border-color: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
     border-style: solid;
     border-bottom-width: 1px;
+    background-color: black;
+    color: white;
 }

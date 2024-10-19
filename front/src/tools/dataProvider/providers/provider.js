@@ -2,39 +2,29 @@ import config from '../../../config'
 import { getDefaultActionUrl, makeAction, uploadFile } from '../tools'
 
 const provider = {
-    getList: (token) => {
+    register: (login) => {
         return makeAction({
             url: getDefaultActionUrl(config.api),
-            action: 'room.get',
-            data: {}
-        })
-    },
-    create: (prefId) => {
-        return makeAction({
-            url: getDefaultActionUrl(config.api),
-            action: 'room.create',
+            action: 'device.register',
             data: {
-                prefId
-            }
-        })
-    },
-    join: (roomId, login) => {
-        return makeAction({
-            url: getDefaultActionUrl(config.api),
-            action: 'room.join',
-            data: {
-                roomId,
                 login
             }
         })
     },
-    checkName: (name) => {
+    check: (device) => {
         return makeAction({
             url: getDefaultActionUrl(config.api),
-            action: 'name.check',
+            action: 'device.check',
             data: {
-                name
+                device
             }
+        })
+    },
+    createRoom: () => {
+        return makeAction({
+            url: getDefaultActionUrl(config.api),
+            action: 'rooms.create',
+            data: {}
         })
     }
 }

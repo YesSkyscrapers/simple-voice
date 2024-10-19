@@ -1,0 +1,36 @@
+.userimage {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.userImageContainer {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.userCardContainer {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    margin: 16px;
+    border-width: 1px;
+    border-color: white;
+    border-radius: 16px;
+    border-style: solid;
+    aspect-ratio: 2;
+}
+
+.userImagePlaceholder {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 1000px;
+    border-width: 1px;
+    border-color: white;
+    border-style: solid;
+    padding: 16px;
+    margin: 16px;
+    overflow: hidden;
+}

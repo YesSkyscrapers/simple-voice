@@ -1,0 +1,29 @@
+.roomRow {
+    flex: 1;
+    flex-direction: row;
+}
+
+.roomRowFirst {
+    border-top-width: 0px;
+}
+
+.roomRowCount {
+    font-weight: 600;
+    margin-right: 16px;
+}
+
+.roomRowUsers {
+    font-style: italic;
+}
+
+.roomRowButton {
+    border-width: 0px;
+    border-top-width: 1px;
+    border-color: white;
+    border-style: solid;
+    padding: 16px;
+}
+
+.roomRowButtonSelected {
+    background-color: rgb(255, 255, 255, 0.1);
+}

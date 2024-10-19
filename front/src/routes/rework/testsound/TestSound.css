@@ -1,0 +1,9 @@
+.buttonsDivider {
+    width: 16px;
+}
+
+.buttonsDivider {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}

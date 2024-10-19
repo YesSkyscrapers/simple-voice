@@ -1,36 +1,31 @@
 import { skyes } from 'skyes'
 import { ormconfig, serverConfig } from '../config'
-import { createRoom } from './actions/createRoom'
-import { getRooms } from './actions/getRooms'
-import { joinRoom } from './actions/joinRoom'
 import websocket from './tools/websocket/websocket'
-import { checkName } from './actions/checkName'
+import { registerDevice } from './actions/registerDevice'
+import { checkDevice } from './actions/checkDevice'
+import { createRoom } from './actions/createRoom'
 
 const runApp = async () => {
     skyes.addAction({
-        name: 'room.get',
-        action: getRooms
+        name: 'device.register',
+        action: registerDevice
     })
 
     skyes.addAction({
-        name: 'room.create',
+        name: 'device.check',
+        action: checkDevice
+    })
+
+    skyes.addAction({
+        name: 'rooms.create',
         action: createRoom
-    })
-
-    skyes.addAction({
-        name: 'room.join',
-        action: joinRoom
-    })
-
-    skyes.addAction({
-        name: 'name.check',
-        action: checkName
     })
 
     websocket.init()
 
     skyes.init({
-        serverConfig: serverConfig
+        serverConfig: serverConfig,
+        ormconfig: ormconfig as any
     })
 }
 
