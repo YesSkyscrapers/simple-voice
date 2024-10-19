@@ -3,19 +3,15 @@ import './TestSound.css'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../../theme/Button/Button'
 import recorder from '../../../tools/recorder'
-import ReactPlayer from 'react-player'
-import moment from 'moment'
 import RecorderParams from './RecorderParams'
 import { waitFor } from '../../../tools/tools'
 import { ROUTES } from '../../../Router'
+import player from '../../../tools/player'
 
 const TestSound = () => {
     const navigate = useNavigate()
     const [isStarted, setIsStarted] = useState(false)
-    const stopFunc = useRef(null)
-    const [playerUrl, setPlayerUrl] = useState(null)
-    const playerRef = useRef(null)
-    const startTime = useRef(null)
+    const stopFuncs = useRef([])
     const parametrs = useRef(null)
 
     const onStart = useCallback(() => {
@@ -30,17 +26,20 @@ const TestSound = () => {
 
         const onSourceOpen = () => {
             sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
-            stopFunc.current = recorder.start(
-                (data, p) => {
-                    console.log(data, p)
-                    data.arrayBuffer().then((buffer) => {
+            stopFuncs.current.push(
+                recorder.start(
+                    (data) => {
                         try {
-                            sourceBuffer.appendBuffer(buffer)
+                            let parsed = JSON.parse(data)
+                            const uint8Array = new Uint8Array(parsed.audioData)
+                            const arrayBuffer = uint8Array.buffer
+
+                            sourceBuffer.appendBuffer(arrayBuffer)
                         } catch (err) {}
-                    })
-                },
-                200,
-                parametrs.current
+                    },
+                    200,
+                    parametrs.current
+                )
             )
             setIsStarted(true)
         }
@@ -53,26 +52,16 @@ const TestSound = () => {
             })
         }
 
-        setPlayerUrl(url)
+        stopFuncs.current.push(player.play(url))
     }, [])
 
     const onStop = useCallback(() => {
-        if (stopFunc.current) {
-            stopFunc.current()
+        if (stopFuncs.current.length > 0) {
+            stopFuncs.current.forEach((stopFunc) => {
+                stopFunc()
+            })
         }
         setIsStarted(false)
-    }, [])
-
-    const onPlayerPlay = useCallback(() => {
-        let tick = () => {
-            if (startTime.current == null) {
-                startTime.current = moment()
-            } else {
-                playerRef.current.seekTo(moment().diff(startTime.current, 'milliseconds') / 1000, 'seconds')
-            }
-        }
-        tick()
-        setInterval(tick, 30000)
     }, [])
 
     const onParametrsChange = useCallback(
@@ -105,23 +94,6 @@ const TestSound = () => {
                     Назад
                 </Button>
             </div>
-            <ReactPlayer
-                url={playerUrl}
-                playing
-                width={1}
-                height={1}
-                volume={1}
-                ref={playerRef}
-                onStart={(e) => console.log('onStart', playerRef.current.getCurrentTime())}
-                onPause={(e) => console.log('onPause', playerRef.current.getCurrentTime())}
-                onBuffer={(e) => console.log('onBuffer', playerRef.current.getCurrentTime())}
-                onBufferEnd={(e) => console.log('onBufferEnd', playerRef.current.getCurrentTime())}
-                onError={(e) => console.log('onError', e)}
-                onEnded={(e) => console.log('onEnded', e)}
-                onPlay={() => {
-                    onPlayerPlay()
-                }}
-            />
         </div>
     )
 }

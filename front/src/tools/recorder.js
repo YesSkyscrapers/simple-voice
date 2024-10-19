@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const start = (
     onData,
     delay,
@@ -21,14 +23,21 @@ const start = (
                 return
             }
             stream = _stream
-
             recorder = new MediaRecorder(stream)
 
             recorder.ondataavailable = (e) => {
-                if (stopCalled) {
-                    return
-                }
-                onData(e.data, parametrs)
+                e.data.arrayBuffer().then((arrayBuffer) => {
+                    if (stopCalled) {
+                        return
+                    }
+
+                    const uint8Array = new Uint8Array(arrayBuffer)
+                    const dataToSend = {
+                        audioData: Array.from(uint8Array)
+                    }
+
+                    onData(JSON.stringify(dataToSend))
+                })
             }
 
             recorder.start(delay)
