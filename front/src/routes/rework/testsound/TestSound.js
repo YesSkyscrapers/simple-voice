@@ -67,13 +67,6 @@ const TestSound = () => {
     const onParametrsChange = useCallback(
         (params) => {
             parametrs.current = params
-
-            if (isStarted) {
-                onStop()
-                waitFor(1).then(() => {
-                    onStart()
-                })
-            }
         },
         [isStarted]
     )

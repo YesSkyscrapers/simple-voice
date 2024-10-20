@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^10.13.0",
     "moment": "^2.30.1",
+    "rc-slider": "^11.1.7",
     "react": "^18.2.0",
     "react-activity": "^2.1.3",
     "react-audio-stream": "^1.0.6",
