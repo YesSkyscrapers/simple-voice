@@ -13,7 +13,6 @@ const DEFAULT_SETTINGS = {
     channelCount: 4,
     echoCancellation: false,
     noiseSuppression: true,
-    microVolume: 1,
     delay: 200
 }
 
@@ -84,21 +83,6 @@ const RecorderParams = ({ onParametrsChange }) => {
                     <img src={parametrs.noiseSuppression ? OnIcon : OffIcon} />
                 </div>
             </Button>
-            <div className="paramRow1">
-                <div className="paramRow">
-                    <div className="paramName">microVolume</div>
-                    <div className="paramValue">{parametrs.microVolume}</div>
-                </div>
-                <div className="paramValueSlider">
-                    <Slider
-                        min={0}
-                        max={2}
-                        step={0.1}
-                        onChange={(value) => onSliderChange('microVolume', value)}
-                        value={parametrs.microVolume}
-                    />
-                </div>
-            </div>
             <div className="paramRow1">
                 <div className="paramRow">
                     <div className="paramName">delay</div>

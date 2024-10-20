@@ -7,6 +7,7 @@ import RecorderParams from './RecorderParams'
 import { waitFor } from '../../../tools/tools'
 import { ROUTES } from '../../../Router'
 import player from '../../../tools/player'
+import moment from 'moment'
 
 const TestSound = () => {
     const navigate = useNavigate()
@@ -19,40 +20,13 @@ const TestSound = () => {
             return
         }
 
-        let mediaSource = new MediaSource()
-        let url = URL.createObjectURL(mediaSource)
+        const { onDataFunc, stop } = player.play()
 
-        let sourceBuffer = null
+        stopFuncs.current.push(recorder.start(onDataFunc, parametrs.current, { channelTime: 1000 }))
 
-        const onSourceOpen = () => {
-            sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
-            stopFuncs.current.push(
-                recorder.start(
-                    (data) => {
-                        try {
-                            let parsed = JSON.parse(data)
-                            const uint8Array = new Uint8Array(parsed.audioData)
-                            const arrayBuffer = uint8Array.buffer
+        stopFuncs.current.push(stop)
 
-                            sourceBuffer.appendBuffer(arrayBuffer)
-                        } catch (err) {}
-                    },
-                    200,
-                    parametrs.current
-                )
-            )
-            setIsStarted(true)
-        }
-
-        if (mediaSource.readyState === 'open') {
-            onSourceOpen()
-        } else {
-            mediaSource.addEventListener('sourceopen', () => {
-                onSourceOpen()
-            })
-        }
-
-        stopFuncs.current.push(player.play(url))
+        setIsStarted(true)
     }, [])
 
     const onStop = useCallback(() => {

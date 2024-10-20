@@ -1,18 +1,5 @@
 import moment from 'moment'
-
-const applyGainParam = (stream, gainParam) => {
-    let audioTrack = stream.getAudioTracks()[0]
-    let ctx = new AudioContext()
-    let src = ctx.createMediaStreamSource(new MediaStream([audioTrack]))
-    let dst = ctx.createMediaStreamDestination()
-    let gainNode = ctx.createGain()
-    gainNode.gain.value = gainParam
-    let arr = [src, gainNode, dst]
-    arr.reduce((a, b) => a && a.connect(b))
-    stream.removeTrack(audioTrack)
-    stream.addTrack(dst.stream.getAudioTracks()[0])
-    return stream
-}
+import { waitFor } from './tools'
 
 const getPickLevelFunc = (stream) => {
     const context = new AudioContext()
@@ -28,23 +15,11 @@ const getPickLevelFunc = (stream) => {
     }
 }
 
-const start = (
-    onData,
-    parametrs = {
-        autoGainControl: false,
-        channelCount: 4,
-        echoCancellation: false,
-        noiseSuppression: true,
-        microVolume: 1,
-        delay: 200
-    }
-) => {
-    let stopCalled = false
-    let stream = null
-    let recorder = null
+const startStream = async (onData, parametrs, techParams) => {
+    try {
+        let stopCalled = false
 
-    navigator.mediaDevices
-        .getUserMedia({
+        let stream = await navigator.mediaDevices.getUserMedia({
             audio: {
                 autoGainControl: parametrs.autoGainControl,
                 channelCount: parametrs.channelCount,
@@ -52,43 +27,144 @@ const start = (
                 noiseSuppression: parametrs.noiseSuppression
             }
         })
-        .then((stream) => applyGainParam(stream, parametrs.microVolume))
-        .then((stream) => {
-            if (stopCalled) {
-                return
-            }
 
-            recorder = new MediaRecorder(stream)
+        let recorder = new MediaRecorder(stream)
+        const getPeakLevel = getPickLevelFunc(stream)
 
-            const getPeakLevel = getPickLevelFunc(stream)
+        let startTime
+        let startSent = false
 
-            recorder.ondataavailable = (e) => {
-                e.data.arrayBuffer().then((arrayBuffer) => {
-                    if (stopCalled) {
-                        return
-                    }
+        recorder.ondataavailable = (e) => {
+            e.data.arrayBuffer().then((arrayBuffer) => {
+                if (stopCalled) {
+                    return
+                }
 
-                    const uint8Array = new Uint8Array(arrayBuffer)
-                    const dataToSend = {
-                        data: Array.from(uint8Array),
-                        peakLevel: getPeakLevel()
-                    }
+                if (!startTime) {
+                    startTime = moment()
+                }
 
-                    onData(dataToSend)
-                })
-            }
+                const uint8Array = new Uint8Array(arrayBuffer)
+                const dataToSend = {
+                    data: Array.from(uint8Array),
+                    peakLevel: getPeakLevel(),
+                    channelId: techParams.channelId,
+                    time: moment().diff(startTime, 'milliseconds') / 1000,
+                    isStart: !startSent
+                }
 
-            recorder.start(parametrs.delay)
-        })
-        .catch((e) => console.log('error getting stream', e))
+                startSent = true
 
-    return () => {
-        stopCalled = true
-        if (stream) {
-            stream.getTracks().forEach((track) => {
-                track.stop()
+                onData(dataToSend)
             })
         }
+        recorder.start(parametrs.delay)
+
+        return () => {
+            stopCalled = true
+            if (stream) {
+                stream.getTracks().forEach((track) => {
+                    track.stop()
+                })
+            }
+        }
+    } catch (err) {
+        console.log('error getting stream', err)
+    }
+}
+
+const startFromCycle = (func, duration) => {
+    let stopFunc
+    let forceStop = false
+
+    func().then((_stopFunc) => {
+        if (forceStop) {
+            _stopFunc()
+        }
+        stopFunc = _stopFunc
+    })
+
+    waitFor(duration).then(() => {
+        if (!forceStop) {
+            if (stopFunc) {
+                stopFunc()
+            }
+            stopFunc = startFromCycle(func, duration)
+        }
+    })
+
+    return () => {
+        forceStop = true
+        if (stopFunc) {
+            stopFunc()
+        }
+    }
+}
+
+const cycleStartup = (func, delay, duration) => {
+    let stopFunc
+    let forceStop = false
+
+    waitFor(delay).then(() => {
+        if (!forceStop) {
+            if (stopFunc) {
+                stopFunc()
+            }
+            stopFunc = startFromCycle(func, duration)
+        }
+    })
+
+    return () => {
+        forceStop = true
+        if (stopFunc) {
+            stopFunc()
+        }
+    }
+}
+
+const start = (
+    onData,
+    parametrs = {
+        autoGainControl: false,
+        channelCount: 4,
+        echoCancellation: false,
+        noiseSuppression: true,
+        delay: 200
+    },
+    techParams = {
+        channelTime: 1000
+    }
+) => {
+    let stops = []
+
+    stops.push(
+        cycleStartup(
+            async () => {
+                return startStream(onData, parametrs, {
+                    channelId: 1
+                })
+            },
+            0,
+            techParams.channelTime
+        )
+    )
+
+    stops.push(
+        cycleStartup(
+            async () => {
+                return startStream(onData, parametrs, {
+                    channelId: 2
+                })
+            },
+            techParams.channelTime / 2,
+            techParams.channelTime
+        )
+    )
+
+    return () => {
+        stops.forEach((stop) => {
+            stop()
+        })
     }
 }
 
