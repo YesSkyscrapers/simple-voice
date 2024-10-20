@@ -16,7 +16,7 @@ const ACTIONS = {
 
 const createWSSocket = (idForConnect, handler, closeHandler) => {
     return new Promise((resolve) => {
-        const ws = new WebSocket('ws://localhost:8778')
+        const ws = new WebSocket('wss://yessky.ru/simplevoiceweb/')
         let connected = false
         ws.onclose = (e) => {
             console.log('onClose', e)
