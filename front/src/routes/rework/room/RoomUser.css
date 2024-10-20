@@ -31,6 +31,23 @@
     border-color: white;
     border-style: solid;
     padding: 16px;
-    margin: 16px;
     overflow: hidden;
+    position: relative;
+}
+
+.userImagePlaceholderAnim {
+    margin: 16px;
+    border-radius: 1000px;
+    outline-width: 0px;
+    outline-color: white;
+    outline-style: solid;
+    transition: outline-width 0.5s ease;
+}
+.userVolume {
+    padding: 8px;
+    align-self: stretch;
+}
+
+.userVolumeHidden {
+    opacity: 0;
 }

@@ -2,6 +2,7 @@
 // import { waitFor } from './tools'
 
 import moment from 'moment'
+import cacheManager, { CACHE_KEYS } from './cacheManager'
 
 // let storage = []
 
@@ -30,10 +31,7 @@ import moment from 'moment'
 //     }
 // }
 
-let storage = []
-const CHANNELS = [1, 2]
-
-const play = (peakUpdate) => {
+const play = (peakUpdate, by = null) => {
     let stops = []
     let context = {}
 
@@ -66,13 +64,16 @@ const play = (peakUpdate) => {
                 })
             }
 
+            let volumesCache = cacheManager.load(CACHE_KEYS.VOLUMES)
             context[data.channelId].audio = new Audio()
+            context[data.channelId].audio.volume =
+                by && volumesCache && typeof volumesCache[by] == 'number' ? volumesCache[by] : 1
             context[data.channelId].audio.src = context[data.channelId].url
             context[data.channelId].audio.preload = 'auto'
 
             context[data.channelId].audio.oncanplaythrough = () => {
                 context[data.channelId].muted = false
-                context[data.channelId].audio.play()
+                context[data.channelId].audio.play().catch((err) => {})
 
                 if (context[3 - data.channelId] && context[3 - data.channelId].audio) {
                     context[3 - data.channelId].audio.muted = true

@@ -1,20 +1,36 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Permission.css'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { askMicrophonePermissions, checkMicrophonePermission } from '../../../tools/permissions'
 import { ROUTES } from '../../../Router'
 import { Spinner } from 'react-activity'
 import { waitFor } from '../../../tools/tools'
+import cacheManager, { CACHE_KEYS } from '../../../tools/cacheManager'
 
 const Permission = () => {
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
     const [loading, setLoading] = useState(true)
     const [permission, setPermission] = useState(null)
 
     const loopPermission = useCallback(() => {
         checkMicrophonePermission().then((res) => {
             if (res == 'granted') {
-                navigate(ROUTES.ROOMS, { replace: true })
+                let preferRoomId = cacheManager.load(CACHE_KEYS.PREFER_PERMISSION_ROOM_ID)
+                console.log({
+                    roomId: preferRoomId && preferRoomId.id ? preferRoomId.id : null
+                })
+                navigate(
+                    {
+                        pathname: ROUTES.ROOMS,
+                        search: createSearchParams({
+                            roomId: preferRoomId && preferRoomId.id ? preferRoomId.id : null
+                        }).toString()
+                    },
+                    { replace: true }
+                )
+                cacheManager.save(CACHE_KEYS.PREFER_PERMISSION_ROOM_ID, { id: null })
             } else {
                 setPermission(res)
                 waitFor(1000).then(() => {
@@ -27,8 +43,16 @@ const Permission = () => {
     useEffect(() => {
         checkMicrophonePermission().then((res) => {
             if (res == 'granted') {
-                navigate(ROUTES.ROOMS, { replace: true })
+                cacheManager.save(CACHE_KEYS.PREFER_PERMISSION_ROOM_ID, { id: null })
+                navigate(
+                    {
+                        pathname: ROUTES.ROOMS,
+                        search: createSearchParams({ roomId }).toString()
+                    },
+                    { replace: true }
+                )
             } else {
+                cacheManager.save(CACHE_KEYS.PREFER_PERMISSION_ROOM_ID, { id: roomId })
                 loopPermission()
                 setPermission(res)
                 setLoading(false)
@@ -37,7 +61,7 @@ const Permission = () => {
                 }
             }
         })
-    }, [])
+    }, [roomId])
 
     return (
         <div className="flex center">

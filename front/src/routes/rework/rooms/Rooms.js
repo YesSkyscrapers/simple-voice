@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Rooms.css'
 import websocket, { ACTIONS } from '../../../tools/websocket'
 import { ROUTES } from '../../../Router'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '../../../theme/Button/Button'
 import CheckIcon from '../../../assets/icons/check.png'
 import CreateIcon from '../../../assets/icons/create.png'
@@ -12,6 +12,8 @@ import RoomInList from './RoomInList'
 
 const Rooms = () => {
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
     const [selectedRoom, setSelectedRoom] = useState(null)
     const [rooms, setRooms] = useState([])
     const intervalRef = useRef(null)
@@ -19,8 +21,13 @@ const Rooms = () => {
     useEffect(() => {
         if (!websocket.isConnected()) {
             navigate(ROUTES.MAIN, { replace: true })
+        } else {
+            if (roomId && roomId != 'null') {
+                console.log('connect', roomId)
+                connectToRoom(roomId)
+            }
         }
-    }, [])
+    }, [roomId])
 
     const updateRooms = useCallback(() => {
         if (websocket.isConnected()) {

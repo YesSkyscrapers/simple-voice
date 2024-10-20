@@ -16,6 +16,15 @@ const DEFAULT_SETTINGS = {
     delay: 200
 }
 
+const getParametrsFromCache = () => {
+    let paramsFromCache = cacheManager.load(CACHE_KEYS.AUDIO_PARAMS)
+    if (paramsFromCache && Object.keys(paramsFromCache).length > 0) {
+        return paramsFromCache
+    } else {
+        return DEFAULT_SETTINGS
+    }
+}
+
 const RecorderParams = ({ onParametrsChange }) => {
     const [parametrs, setParametrs] = useState(DEFAULT_SETTINGS)
 
@@ -99,3 +108,4 @@ const RecorderParams = ({ onParametrsChange }) => {
 }
 
 export default RecorderParams
+export { getParametrsFromCache }

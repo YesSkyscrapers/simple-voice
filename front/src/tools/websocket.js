@@ -1,3 +1,6 @@
+import systemSound, { SOUNDS } from './systemSound'
+import { waitFor } from './tools'
+
 const ACTIONS = {
     CONNECT: 1,
     CONNECTED_SUCCESS: 2,
@@ -6,7 +9,9 @@ const ACTIONS = {
     JOIN_ROOM: 5,
     UPDATE_USERS_LIST: 6,
     CALL_UPDATE_USERS_LOGINS: 7,
-    UPDATE_USERS_LOGINS: 8
+    UPDATE_USERS_LOGINS: 8,
+    SEND_VOICE_DATA: 9,
+    RECEIVE_VOICE_DATA: 10
 }
 
 const createWSSocket = (idForConnect, handler, closeHandler) => {
@@ -68,6 +73,10 @@ const init = async (auth) => {
         },
         () => {
             socket = null
+            systemSound.play(SOUNDS.EXIT)
+            waitFor(200).then(() => {
+                window.location.reload()
+            })
         }
     )
 }

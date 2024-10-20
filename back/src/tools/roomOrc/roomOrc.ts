@@ -21,6 +21,16 @@ const join = (roomId, userId) => {
     left(userId)
 
     let room = rooms.find((room) => room.id == roomId)
+
+    if (!room) {
+        rooms.push({
+            id: roomId,
+            users: []
+        })
+
+        room = rooms.find((room) => room.id == roomId)
+    }
+
     if (room) {
         room.users.push({
             id: userId
@@ -57,9 +67,20 @@ const left = (userId) => {
     }
 }
 
+const getRoommates = (userId) => {
+    const room = rooms.find((room) => room.users.find((roomUser) => roomUser.id == userId))
+    if (room) {
+        let roommates = room.users.filter((roomUser) => roomUser.id != userId)
+        return roommates.map((user) => user.id)
+    } else {
+        return []
+    }
+}
+
 export default {
     create,
     getRooms,
     join,
-    left
+    left,
+    getRoommates
 }

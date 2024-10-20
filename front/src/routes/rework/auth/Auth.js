@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import './Auth.css'
 import TextInput from '../../../theme/TextInput/TextInput'
 import Button from '../../../theme/Button/Button'
 import dataProvider from '../../../tools/dataProvider/dataProvider'
 import cacheManager, { CACHE_KEYS } from '../../../tools/cacheManager'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '../../../Router'
 
 const Main = () => {
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
     const [login, setLogin] = useState('')
 
     const onLogin = useCallback(
@@ -18,20 +20,25 @@ const Main = () => {
                 .register(login)
                 .then((response) => {
                     if (response) {
-                        console.log(response)
                         let auth = cacheManager.load(CACHE_KEYS.AUTH)
                         auth.deviceId = response.entity.deviceId
                         auth.id = response.entity.id
                         auth.login = response.entity.login
                         cacheManager.save(CACHE_KEYS.AUTH, auth)
-                        navigate(ROUTES.PERMISSION, { replace: true })
+                        navigate(
+                            {
+                                pathname: ROUTES.PERMISSION,
+                                search: createSearchParams({ roomId }).toString()
+                            },
+                            { replace: true }
+                        )
                     }
                 })
                 .finally(() => {
                     toggleLoad(false)
                 })
         },
-        [login, navigate]
+        [login, navigate, roomId]
     )
 
     return (

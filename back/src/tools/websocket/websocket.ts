@@ -11,7 +11,9 @@ const ACTIONS = {
     JOIN_ROOM: 5,
     UPDATE_USERS_LIST: 6,
     CALL_UPDATE_USERS_LOGINS: 7,
-    UPDATE_USERS_LOGINS: 8
+    UPDATE_USERS_LOGINS: 8,
+    SEND_VOICE_DATA: 9,
+    RECEIVE_VOICE_DATA: 10
 }
 
 let server: WebSocketServer = null
@@ -67,6 +69,17 @@ const init = () => {
                                         send(userId, ACTIONS.UPDATE_USERS_LOGINS, result.data)
                                     }
                                 })
+                            break
+                        }
+                        case ACTIONS.SEND_VOICE_DATA: {
+                            const roommates = roomOrc.getRoommates(userId)
+                            let dataForSend = {
+                                ...parsed.payload,
+                                by: userId
+                            }
+                            roommates.forEach((roommateId) => {
+                                send(roommateId, ACTIONS.RECEIVE_VOICE_DATA, dataForSend)
+                            })
                             break
                         }
                     }

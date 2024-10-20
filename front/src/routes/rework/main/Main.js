@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import './Main.css'
 import cacheManager, { CACHE_KEYS } from '../../../tools/cacheManager'
 import dataProvider from '../../../tools/dataProvider/dataProvider'
 import { ROUTES } from '../../../Router'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Spinner } from 'react-activity'
 import websocket from '../../../tools/websocket'
 
 const Main = () => {
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
 
     useEffect(() => {
         let auth = cacheManager.load(CACHE_KEYS.AUTH)
@@ -22,22 +24,46 @@ const Main = () => {
                 .then((response) => {
                     if (response && response.ok) {
                         return websocket.init(auth).then(() => {
-                            navigate(ROUTES.PERMISSION, { replace: true })
+                            navigate(
+                                {
+                                    pathname: ROUTES.PERMISSION,
+                                    search: createSearchParams({ roomId }).toString()
+                                },
+                                { replace: true }
+                            )
                         })
                     } else {
                         cacheManager.drop(CACHE_KEYS.AUTH)
-                        navigate(ROUTES.AUTH, { replace: true })
+                        navigate(
+                            {
+                                pathname: ROUTES.AUTH,
+                                search: createSearchParams({ roomId }).toString()
+                            },
+                            { replace: true }
+                        )
                     }
                 })
                 .catch((err) => {
                     cacheManager.drop(CACHE_KEYS.AUTH)
-                    navigate(ROUTES.AUTH, { replace: true })
+                    navigate(
+                        {
+                            pathname: ROUTES.AUTH,
+                            search: createSearchParams({ roomId }).toString()
+                        },
+                        { replace: true }
+                    )
                 })
         } else {
             cacheManager.drop(CACHE_KEYS.AUTH)
-            navigate(ROUTES.AUTH, { replace: true })
+            navigate(
+                {
+                    pathname: ROUTES.AUTH,
+                    search: createSearchParams({ roomId }).toString()
+                },
+                { replace: true }
+            )
         }
-    }, [navigate])
+    }, [navigate, roomId])
     return (
         <div className="maxheight center">
             <Spinner size={30} color="white" />
