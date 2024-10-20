@@ -22,7 +22,7 @@ const TestSound = () => {
 
         const { onDataFunc, stop } = player.play()
 
-        stopFuncs.current.push(recorder.start(onDataFunc, parametrs.current, { channelTime: 1000 }))
+        stopFuncs.current.push(recorder.start(onDataFunc, parametrs.current, { channelTime: 3000 }))
 
         stopFuncs.current.push(stop)
 

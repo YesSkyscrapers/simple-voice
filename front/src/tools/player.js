@@ -70,12 +70,11 @@ const play = () => {
             context[data.channelId].audio.src = context[data.channelId].url
             context[data.channelId].audio.preload = 'auto'
 
-            console.log('call play for', data.channelId)
             context[data.channelId].audio.oncanplaythrough = () => {
                 context[data.channelId].muted = false
                 context[data.channelId].audio.play()
+
                 if (context[3 - data.channelId] && context[3 - data.channelId].audio) {
-                    console.log('call stop other', data.channelId)
                     context[3 - data.channelId].audio.muted = true
                 }
             }
@@ -85,9 +84,6 @@ const play = () => {
                 const arrayBuffer = uint8Array.buffer
 
                 context[data.channelId].sourceBuffer.appendBuffer(arrayBuffer)
-                // context[data.channelId].audio.currentTime =
-                //     moment().diff(context[data.channelId].time, 'milliseconds') / 1000
-                console.log('append data to', data.channelId)
             }
         }
     }
