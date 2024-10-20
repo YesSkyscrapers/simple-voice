@@ -64,6 +64,13 @@ const play = (peakUpdate, by = null) => {
                 })
             }
 
+            if (context[data.channelId].audio) {
+                context[data.channelId].audio.сurrentSrc = null
+                context[data.channelId].audio.src = ''
+                context[data.channelId].audio.srcObject = null
+                context[data.channelId].audio.remove()
+            }
+
             let volumesCache = cacheManager.load(CACHE_KEYS.VOLUMES)
             context[data.channelId].audio = new Audio()
             context[data.channelId].audio.volume =

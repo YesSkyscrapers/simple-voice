@@ -37,12 +37,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .warningInGrid {
     position: absolute;
-    top: 50px;
+    top: -20px;
     color: orange;
+    text-align: center;
 }
 
 .roomsContainer {

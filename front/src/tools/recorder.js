@@ -1,8 +1,12 @@
 import moment from 'moment'
 import { waitFor } from './tools'
 
-const getPickLevelFunc = (stream) => {
-    const context = new AudioContext()
+let context = null
+const getPickLevelFunc = async (stream) => {
+    if (!context) {
+        context = new AudioContext()
+    }
+    await context.resume()
     const source = context.createMediaStreamSource(stream)
     const analyzer = context.createAnalyser()
     source.connect(analyzer)
@@ -29,7 +33,7 @@ const startStream = async (onData, parametrs, techParams) => {
         })
 
         let recorder = new MediaRecorder(stream)
-        const getPeakLevel = getPickLevelFunc(stream)
+        const getPeakLevel = await getPickLevelFunc(stream)
 
         let startTime
         let startSent = false
