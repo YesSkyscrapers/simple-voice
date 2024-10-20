@@ -33,7 +33,7 @@ import moment from 'moment'
 let storage = []
 const CHANNELS = [1, 2]
 
-const play = () => {
+const play = (peakUpdate) => {
     let stops = []
     let context = {}
 
@@ -76,13 +76,16 @@ const play = () => {
 
                 if (context[3 - data.channelId] && context[3 - data.channelId].audio) {
                     context[3 - data.channelId].audio.muted = true
+                    context[3 - data.channelId].muted = true
                 }
             }
         } else {
             if (context[data.channelId] && context[data.channelId].sourceBuffer) {
                 const uint8Array = new Uint8Array(data.data)
                 const arrayBuffer = uint8Array.buffer
-
+                if (!context[data.channelId].muted) {
+                    peakUpdate(data.peakLevel)
+                }
                 context[data.channelId].sourceBuffer.appendBuffer(arrayBuffer)
             }
         }

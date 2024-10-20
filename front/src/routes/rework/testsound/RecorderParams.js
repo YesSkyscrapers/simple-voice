@@ -43,10 +43,6 @@ const RecorderParams = ({ onParametrsChange }) => {
             ...parametrs,
             channelCount: Number(parametrs.channelCount) != NaN ? Number(parametrs.channelCount) : 4
         }
-        console.log({
-            ...parametrs,
-            channelCount: Number(parametrs.channelCount) != NaN ? Number(parametrs.channelCount) : 4
-        })
         onParametrsChange(newParams)
         cacheManager.save(CACHE_KEYS.AUDIO_PARAMS, newParams)
     }, [parametrs])
