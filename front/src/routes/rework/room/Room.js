@@ -126,43 +126,12 @@ const Room = () => {
         stopFuncs.current.push(recorder.start(onRecorderData, parametrs, { channelTime: 3000 }))
     }, [])
 
-    const startListening = useCallback(() => {
-        let unsub = websocket.subscribe(ACTIONS.RECEIVE_VOICE_DATA, (data) => {
-            let exists = players.current.find((player) => player.by == data.by)
-            if (!exists) {
-                const { onDataFunc, stop } = player.play((peak) => {
-                    let visual = document.getElementById(`userImagePlaceholderAnim_${data.by}`)
-                    if (visual) {
-                        visual.style.outlineWidth = `${peak * 50}px`
-                    }
-                }, data.by)
-                stopFuncs.current.push(stop)
-                players.current.push({
-                    by: data.by,
-                    onDataFunc
-                })
-            }
-
-            exists = players.current.find((player) => player.by == data.by)
-            if (exists) {
-                exists.onDataFunc(data)
-            }
-        })
-
-        return () => {
-            if (unsub) {
-                unsub()
-            }
-        }
-    }, [])
-
     useEffect(() => {
         if (loading && users.length > 0) {
             setLoading(false)
             systemSound.play(SOUNDS.JOIN)
 
             startVoice()
-            startListening()
         }
     }, [users, loading])
 

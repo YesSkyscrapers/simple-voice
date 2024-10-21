@@ -9,12 +9,14 @@ import { ROUTES } from '../../../Router'
 import player from '../../../tools/player'
 import moment from 'moment'
 import PeakVisual from './PeakVisual'
+import Reactplayer from '../../../tools/reactplayer'
 
 const TestSound = () => {
     const navigate = useNavigate()
     const [isStarted, setIsStarted] = useState(false)
     const stopFuncs = useRef([])
     const parametrs = useRef(null)
+    const playerRef = useRef(null)
 
     const [peak, setPeak] = useState(0)
 
@@ -23,11 +25,9 @@ const TestSound = () => {
             return
         }
 
-        const { onDataFunc, stop } = player.play(setPeak)
+        stopFuncs.current.push(recorder.start(playerRef.current.onDataFunc, parametrs.current, { channelTime: 3000 }))
 
-        stopFuncs.current.push(recorder.start(onDataFunc, parametrs.current, { channelTime: 3000 }))
-
-        stopFuncs.current.push(stop)
+        stopFuncs.current.push(playerRef.current.stop)
 
         setIsStarted(true)
     }, [])
@@ -50,13 +50,15 @@ const TestSound = () => {
     )
 
     const onBack = useCallback(() => {
+        onStop()
         navigate(ROUTES.MAIN, { replace: true })
-    }, [])
+    }, [onStop])
 
     return (
         <div className="maxheight center vertical">
             <PeakVisual peak={peak} />
             <RecorderParams onParametrsChange={onParametrsChange} />
+            <Reactplayer peakUpdate={setPeak} ref={playerRef} />
             <div className="buttonsContainer">
                 <Button main onPress={isStarted ? onStop : onStart}>
                     {isStarted ? 'Стоп' : 'Старт'}
