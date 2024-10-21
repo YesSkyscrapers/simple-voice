@@ -15,6 +15,10 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
         }
     })
     const contextRef = useRef({})
+    const player1Ref = useRef(null)
+    const player2Ref = useRef(null)
+    const startTime = useRef(null)
+    const interval = useRef(null)
     const stops = useRef([])
     const peakChannelId = useRef(0)
 
@@ -113,6 +117,32 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
                 playing: false
             }
         }))
+
+        let tick = () => {
+            if (!startTime.current[channelId]) {
+                startTime.current[channelId] = moment()
+            } else {
+                if (channelId == 1) {
+                    player1Ref.current.seekTo(
+                        moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
+                        'seconds'
+                    )
+                } else {
+                    player2Ref.current.seekTo(
+                        moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
+                        'seconds'
+                    )
+                }
+            }
+        }
+
+        if (interval.current[channelId]) {
+            clearInterval(interval.current[channelId])
+            interval.current[channelId] = null
+        }
+        startTime.current[channelId] = null
+        interval.current = setInterval(tick, 10000)
+        tick()
     }, [])
     const onPlay1 = useCallback(() => {
         onPlay(1)
@@ -123,8 +153,24 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
 
     return (
         <div>
-            <ReactPlayer onPlay={onPlay1} url={url1} playing={playing1} width={1} height={1} volume={volume} />
-            <ReactPlayer onPlay={onPlay2} url={url2} playing={playing2} width={1} height={1} volume={volume} />
+            <ReactPlayer
+                ref={player1Ref}
+                onPlay={onPlay1}
+                url={url1}
+                playing={playing1}
+                width={1}
+                height={1}
+                volume={volume}
+            />
+            <ReactPlayer
+                ref={player2Ref}
+                onPlay={onPlay2}
+                url={url2}
+                playing={playing2}
+                width={1}
+                height={1}
+                volume={volume}
+            />
         </div>
     )
 })
