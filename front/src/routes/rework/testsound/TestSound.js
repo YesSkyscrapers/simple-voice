@@ -17,6 +17,7 @@ const TestSound = () => {
     const stopFuncs = useRef([])
     const parametrs = useRef(null)
     const playerRef = useRef(null)
+    const changeChannelRef = useRef(null)
 
     const [peak, setPeak] = useState(0)
 
@@ -25,7 +26,9 @@ const TestSound = () => {
             return
         }
 
-        stopFuncs.current.push(recorder.start(playerRef.current.onDataFunc, parametrs.current, { channelTime: 3000 }))
+        const { changeChannel, stop } = recorder.start(playerRef.current.onDataFunc, parametrs.current)
+        changeChannelRef.current = changeChannel
+        stopFuncs.current.push(stop)
 
         stopFuncs.current.push(playerRef.current.stop)
 
@@ -49,6 +52,10 @@ const TestSound = () => {
         [onStop]
     )
 
+    const onChangeChannel = useCallback(() => {
+        changeChannelRef.current()
+    }, [])
+
     const onBack = useCallback(() => {
         onStop()
         navigate(ROUTES.MAIN, { replace: true })
@@ -62,6 +69,10 @@ const TestSound = () => {
             <div className="buttonsContainer">
                 <Button main onPress={isStarted ? onStop : onStart}>
                     {isStarted ? 'Стоп' : 'Старт'}
+                </Button>
+                <div className="buttonsDivider" />
+                <Button main onPress={onChangeChannel}>
+                    {'Toggle channel'}
                 </Button>
                 <div className="buttonsDivider" />
                 <Button main onPress={onBack}>

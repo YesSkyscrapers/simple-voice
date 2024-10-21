@@ -19,6 +19,7 @@ const Room = () => {
     const [users, setUsers] = useState([])
     const stopFuncs = useRef([])
     const players = useRef([])
+    const changeChannelRef = useRef(null)
 
     const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
 
@@ -70,6 +71,7 @@ const Room = () => {
 
                             if (wasAdd && prev.length > 0) {
                                 systemSound.play(SOUNDS.NEWENTER)
+                                changeChannelRef.current()
                             }
 
                             return newState
@@ -123,7 +125,9 @@ const Room = () => {
             websocket.send(ACTIONS.SEND_VOICE_DATA, data)
         }
 
-        stopFuncs.current.push(recorder.start(onRecorderData, parametrs, { channelTime: 3000 }))
+        const { stop, changeChannel } = recorder.start(onRecorderData, parametrs)
+        changeChannelRef.current = changeChannel
+        stopFuncs.current.push(stop)
     }, [])
 
     useEffect(() => {

@@ -3,7 +3,7 @@ import cacheManager, { CACHE_KEYS } from './cacheManager'
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 
-const Reactplayer = forwardRef(({ peakUpdate, by = null, volume = 1 }, ref) => {
+const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
     const [context, setContext] = useState({
         1: {
             playing: false,
@@ -73,7 +73,11 @@ const Reactplayer = forwardRef(({ peakUpdate, by = null, volume = 1 }, ref) => {
                     if (data.channelId == peakChannelId.current) {
                         peakUpdate(data.peakLevel)
                     }
-                    contextRef.current[data.channelId].sourceBuffer.appendBuffer(arrayBuffer)
+                    try {
+                        contextRef.current[data.channelId].sourceBuffer.appendBuffer(arrayBuffer)
+                    } catch (err) {
+                        console.log(err, contextRef.current[data.channelId].sourceBuffer.error)
+                    }
                 }
             }
         },

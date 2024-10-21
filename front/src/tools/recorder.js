@@ -19,7 +19,7 @@ const getPickLevelFunc = async (stream) => {
     }
 }
 
-const startStream = async (onData, parametrs, techParams) => {
+const startStream = async (onData, parametrs, channelId) => {
     try {
         let stopCalled = false
 
@@ -52,7 +52,7 @@ const startStream = async (onData, parametrs, techParams) => {
                 const dataToSend = {
                     data: Array.from(uint8Array),
                     peakLevel: getPeakLevel(),
-                    channelId: techParams.channelId,
+                    channelId: channelId,
                     time: moment().diff(startTime, 'milliseconds') / 1000,
                     isStart: !startSent
                 }
@@ -77,55 +77,6 @@ const startStream = async (onData, parametrs, techParams) => {
     }
 }
 
-const startFromCycle = (func, duration) => {
-    let stopFunc
-    let forceStop = false
-
-    func().then((_stopFunc) => {
-        if (forceStop) {
-            _stopFunc()
-        }
-        stopFunc = _stopFunc
-    })
-
-    waitFor(duration).then(() => {
-        if (!forceStop) {
-            if (stopFunc) {
-                stopFunc()
-            }
-            stopFunc = startFromCycle(func, duration)
-        }
-    })
-
-    return () => {
-        forceStop = true
-        if (stopFunc) {
-            stopFunc()
-        }
-    }
-}
-
-const cycleStartup = (func, delay, duration) => {
-    let stopFunc
-    let forceStop = false
-
-    waitFor(delay).then(() => {
-        if (!forceStop) {
-            if (stopFunc) {
-                stopFunc()
-            }
-            stopFunc = startFromCycle(func, duration)
-        }
-    })
-
-    return () => {
-        forceStop = true
-        if (stopFunc) {
-            stopFunc()
-        }
-    }
-}
-
 const start = (
     onData,
     parametrs = {
@@ -134,41 +85,52 @@ const start = (
         echoCancellation: false,
         noiseSuppression: true,
         delay: 200
-    },
-    techParams = {
-        channelTime: 1000
     }
 ) => {
-    let stops = []
+    let stops = {
+        1: null,
+        2: null
+    }
+    let currentChannel = 1
+    let stopCalled = false
+    let changeActive = false
 
-    stops.push(
-        cycleStartup(
-            async () => {
-                return startStream(onData, parametrs, {
-                    channelId: 1
-                })
-            },
-            0,
-            techParams.channelTime
-        )
-    )
+    const changeChannel = () => {
+        if (changeActive) {
+            return
+        }
+        changeActive = true
+        let newChannel = 3 - currentChannel
+        setTimeout(() => {
+            console.log(newChannel)
+            if (stops[3 - newChannel]) {
+                stops[3 - newChannel]()
+            }
+        }, 500)
 
-    stops.push(
-        cycleStartup(
-            async () => {
-                return startStream(onData, parametrs, {
-                    channelId: 2
-                })
-            },
-            techParams.channelTime / 2,
-            techParams.channelTime
-        )
-    )
-
-    return () => {
-        stops.forEach((stop) => {
-            stop()
+        startStream(onData, parametrs, newChannel).then((stop) => {
+            if (stopCalled) {
+                stop()
+            }
+            stops[newChannel] = stop
+            currentChannel = newChannel
+            changeActive = false
         })
+    }
+
+    changeChannel()
+
+    return {
+        stop: () => {
+            stopCalled = true
+            if (stops[1]) {
+                stops[1]()
+            }
+            if (stops[2]) {
+                stops[2]()
+            }
+        },
+        changeChannel: changeChannel
     }
 }
 
