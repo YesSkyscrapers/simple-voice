@@ -101,11 +101,15 @@ const Rooms = () => {
                         <div className="gridButtonText">Создать</div>
                     </div>
                 </Button>
-                <Button onPress={onJoin} disabled={!selectedRoom} className="gridButton">
+                <Button
+                    onPress={onJoin}
+                    disabled={!selectedRoom}
+                    className="gridButton"
+                    addChilds={selectedRoom ? null : <div className="warningInGrid">Не выбрана комната</div>}
+                >
                     <div className="gridButtonContent">
                         <img className="gridButtonImage" src={JoinIcon} />
                         <div className="gridButtonText">Войти</div>
-                        {selectedRoom ? null : <div className="warningInGrid">Не выбрана комната</div>}
                     </div>
                 </Button>
                 <Button onPress={onTest} className="gridButton">

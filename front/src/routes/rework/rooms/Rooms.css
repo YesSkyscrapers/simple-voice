@@ -42,7 +42,7 @@
 
 .warningInGrid {
     position: absolute;
-    top: -20px;
+    top: 40px;
     color: orange;
     text-align: center;
 }

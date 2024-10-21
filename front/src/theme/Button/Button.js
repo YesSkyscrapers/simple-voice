@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import './Button.css'
 import { Spinner } from 'react-activity'
 
-const Button = ({ onPress, disabled, children, className, classNameContent, main = false, ...props }) => {
+const Button = ({ onPress, disabled, children, className, classNameContent, main = false, addChilds, ...props }) => {
     const [useLoader, setLoader] = useState(false)
 
     const onClick = useCallback(
@@ -33,6 +33,7 @@ const Button = ({ onPress, disabled, children, className, classNameContent, main
             <div className={`ButtonLoader ButtonContent ${useLoader ? '' : 'ButtonContentHidden'}`}>
                 {useLoader ? <Spinner size={13} color="white" /> : null}
             </div>
+            {addChilds}
         </div>
     )
 }
