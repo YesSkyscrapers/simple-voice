@@ -1,0 +1,88 @@
+.blockcontainer {
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.letterimage {
+    width: 50px;
+    height: 50px;
+}
+
+.openedBlockContainer {
+    z-index: 1;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    flex-direction: column;
+    background-color: black;
+}
+
+.messagesContainer {
+    flex: 1;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.inputContainer {
+    flex-direction: row;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-color: white;
+    border-style: solid;
+    padding: 16px;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.messageInput {
+    flex: 1;
+}
+
+.sendContainer {
+    margin-left: 16px;
+}
+
+.letternotification {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+}
+
+.Message {
+    margin: 16px;
+    padding: 16px;
+    border-width: 1px;
+    border-color: white;
+    border-radius: 16px;
+    border-style: solid;
+    align-self: flex-start;
+    border-bottom-left-radius: 0px;
+    flex-direction: column;
+}
+
+.MyMessage {
+    margin: 16px;
+    padding: 16px;
+    border-width: 1px;
+    border-color: white;
+    border-radius: 16px;
+    border-style: solid;
+    align-self: flex-end;
+    border-bottom-right-radius: 0px;
+    flex-direction: column;
+}
+
+.messagetime {
+    font-size: 9px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}

@@ -2,6 +2,7 @@ import { WebSocketServer } from 'ws'
 import roomOrc from '../roomOrc/roomOrc'
 import { entityManager, FilterTypes } from 'skyes'
 import { Device } from '../../entity/Device'
+import messageCenter from '../messageCenter/messageCenter'
 
 const ACTIONS = {
     CONNECT: 1,
@@ -13,7 +14,10 @@ const ACTIONS = {
     CALL_UPDATE_USERS_LOGINS: 7,
     UPDATE_USERS_LOGINS: 8,
     SEND_VOICE_DATA: 9,
-    RECEIVE_VOICE_DATA: 10
+    RECEIVE_VOICE_DATA: 10,
+    GET_LAST_MESSAGES: 11,
+    ON_NEW_MESSAGE: 12,
+    SEND_MESSAGE: 13
 }
 
 let server: WebSocketServer = null
@@ -79,6 +83,31 @@ const init = () => {
                             }
                             roommates.forEach((roommateId) => {
                                 send(roommateId, ACTIONS.RECEIVE_VOICE_DATA, dataForSend)
+                            })
+                            break
+                        }
+
+                        case ACTIONS.GET_LAST_MESSAGES: {
+                            messageCenter.getLastMessages().then((result) => {
+                                let dataForSend = {
+                                    ...result
+                                }
+
+                                send(userId, ACTIONS.GET_LAST_MESSAGES, dataForSend)
+                            })
+                            break
+                        }
+
+                        case ACTIONS.SEND_MESSAGE: {
+                            messageCenter.sendMessage(userId, parsed.payload.message).then((result) => {
+                                const roommates = roomOrc.getRoommates(userId)
+                                let dataForSend = {
+                                    ...result
+                                }
+                                roommates.forEach((roommateId) => {
+                                    send(roommateId, ACTIONS.ON_NEW_MESSAGE, dataForSend)
+                                })
+                                send(userId, ACTIONS.ON_NEW_MESSAGE, dataForSend)
                             })
                             break
                         }

@@ -11,6 +11,7 @@ import recorder from '../../../tools/recorder'
 import player from '../../../tools/player'
 import { waitFor } from '../../../tools/tools'
 import systemSound, { SOUNDS } from '../../../tools/systemSound'
+import Messages from './Messages'
 
 const Room = () => {
     const navigate = useNavigate()
@@ -18,7 +19,7 @@ const Room = () => {
     const [loading, setLoading] = useState(true)
     const [users, setUsers] = useState([])
     const stopFuncs = useRef([])
-    const players = useRef([])
+    const [showButtons, setShowButtons] = useState(false)
     const changeChannelRef = useRef(null)
 
     const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
@@ -136,6 +137,7 @@ const Room = () => {
             systemSound.play(SOUNDS.JOIN)
 
             startVoice()
+            setShowButtons(true)
         }
     }, [users, loading])
 
@@ -150,6 +152,11 @@ const Room = () => {
                     {users.map((user) => {
                         return <RoomUser key={user.id} user={user} />
                     })}
+                    {showButtons ? (
+                        <div className="buttonsContainer">
+                            <Messages />
+                        </div>
+                    ) : null}
                 </div>
             )}
         </div>

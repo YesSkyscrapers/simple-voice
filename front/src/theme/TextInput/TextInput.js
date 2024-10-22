@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import './TextInput.css'
 
-const TextInput = ({ value, onChangeText, className, ...props }) => {
+const TextInput = ({ value, onChangeText, className, useTextarea = false, ...props }) => {
     const onChange = useCallback(
         (event) => {
             if (onChangeText) {
@@ -11,7 +11,11 @@ const TextInput = ({ value, onChangeText, className, ...props }) => {
         [onChangeText]
     )
 
-    return <input {...props} className={`TextInput ${className}`} value={value} onChange={onChange} />
+    if (useTextarea) {
+        return <textarea {...props} className={`TextInput ${className}`} value={value} onChange={onChange} />
+    } else {
+        return <input {...props} className={`TextInput ${className}`} value={value} onChange={onChange} />
+    }
 }
 
 export default TextInput

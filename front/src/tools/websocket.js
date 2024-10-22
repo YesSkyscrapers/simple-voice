@@ -11,7 +11,10 @@ const ACTIONS = {
     CALL_UPDATE_USERS_LOGINS: 7,
     UPDATE_USERS_LOGINS: 8,
     SEND_VOICE_DATA: 9,
-    RECEIVE_VOICE_DATA: 10
+    RECEIVE_VOICE_DATA: 10,
+    GET_LAST_MESSAGES: 11,
+    ON_NEW_MESSAGE: 12,
+    SEND_MESSAGE: 13
 }
 
 const createWSSocket = (idForConnect, handler, closeHandler) => {

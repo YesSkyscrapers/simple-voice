@@ -5,3 +5,15 @@
     justify-content: center;
     align-items: center;
 }
+
+.buttonsContainer {
+    flex-direction: column;
+    width: 50px;
+    position: absolute;
+    bottom: 5vh;
+    left: 0px;
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+    border-left-width: 0px;
+}

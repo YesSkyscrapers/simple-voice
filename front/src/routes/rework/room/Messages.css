@@ -1,0 +1,67 @@
+.blockcontainer {
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.letterimage {
+    width: 50px;
+    height: 50px;
+}
+
+.openedBlockContainer {
+    z-index: 1;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    flex-direction: column;
+    background-color: black;
+}
+
+.messagesContainer {
+    flex: 1;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.inputContainer {
+    flex-direction: row;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-color: white;
+    border-style: solid;
+    padding: 16px;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.messageInput {
+    flex: 1;
+}
+
+.sendContainer {
+    margin-left: 16px;
+}
+
+.letternotification {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+}
+
+.header {
+    justify-content: flex-end;
+    padding: 16px;
+    border-color: white;
+    border-style: solid;
+    border-width: 0px;
+    border-bottom-width: 1px;
+}
