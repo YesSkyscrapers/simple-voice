@@ -1,6 +1,6 @@
 import moment from 'moment'
 import cacheManager, { CACHE_KEYS } from './cacheManager'
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 
 const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
@@ -17,8 +17,8 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
     const contextRef = useRef({})
     const player1Ref = useRef(null)
     const player2Ref = useRef(null)
-    const startTime = useRef(null)
-    const interval = useRef(null)
+    const startTime = useRef({})
+    const interval = useRef({})
     const stops = useRef([])
     const peakChannelId = useRef(0)
 
@@ -150,6 +150,19 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
     const onPlay2 = useCallback(() => {
         onPlay(2)
     }, [onPlay])
+
+    useEffect(() => {
+        return () => {
+            if (interval.current[1]) {
+                clearInterval(interval.current[1])
+                interval.current[1] = null
+            }
+            if (interval.current[2]) {
+                clearInterval(interval.current[2])
+                interval.current[2] = null
+            }
+        }
+    }, [])
 
     return (
         <div>
