@@ -5,6 +5,7 @@ import LetterImage from '../../../assets/icons/letter.png'
 import TextInput from '../../../theme/TextInput/TextInput'
 import websocket, { ACTIONS } from '../../../tools/websocket'
 import Message from './Message'
+import systemSound, { SOUNDS } from '../../../tools/systemSound'
 
 const Messages = ({}) => {
     const [opened, setOpened] = useState(false)
@@ -35,6 +36,7 @@ const Messages = ({}) => {
 
         unsubs.push(
             websocket.subscribe(ACTIONS.ON_NEW_MESSAGE, (message) => {
+                systemSound.play(SOUNDS.NEW_MESSAGE)
                 if (!opened) {
                     setShowNotif(true)
                 } else {
