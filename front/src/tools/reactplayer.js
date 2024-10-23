@@ -123,15 +123,19 @@ const Reactplayer = forwardRef(({ peakUpdate, volume = 1 }, ref) => {
                 startTime.current[channelId] = moment()
             } else {
                 if (channelId == 1) {
-                    player1Ref.current.seekTo(
-                        moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
-                        'seconds'
-                    )
+                    if (player1Ref.current) {
+                        player1Ref.current.seekTo(
+                            moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
+                            'seconds'
+                        )
+                    }
                 } else {
-                    player2Ref.current.seekTo(
-                        moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
-                        'seconds'
-                    )
+                    if (player2Ref.current) {
+                        player2Ref.current.seekTo(
+                            moment().diff(startTime.current[channelId], 'milliseconds') / 1000,
+                            'seconds'
+                        )
+                    }
                 }
             }
         }

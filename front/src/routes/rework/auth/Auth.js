@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import './Auth.css'
 import TextInput from '../../../theme/TextInput/TextInput'
 import Button from '../../../theme/Button/Button'
@@ -6,15 +7,22 @@ import dataProvider from '../../../tools/dataProvider/dataProvider'
 import cacheManager, { CACHE_KEYS } from '../../../tools/cacheManager'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '../../../Router'
+import { showError } from '../../../store/actions/appActions'
 
 const Main = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [searchParams, setSearchParams] = useSearchParams()
     const roomId = useMemo(() => searchParams.get('roomId'), [searchParams])
     const [login, setLogin] = useState('')
 
     const onLogin = useCallback(
         (toggleLoad) => {
+            if (login.length == 0) {
+                dispatch(showError('Имя не может быть пустым'))
+                return
+            }
+
             toggleLoad(true)
             dataProvider
                 .register(login)

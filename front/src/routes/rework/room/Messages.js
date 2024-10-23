@@ -12,6 +12,7 @@ const Messages = ({}) => {
     const shiftPressed = useRef(false)
     const [messageForSend, setMessageForSend] = useState('')
     const [showNotif, setShowNotif] = useState(false)
+    const [userLogins, setUserLogins] = useState([])
     let wasAskRef = useRef(false)
     const elementRef = useRef()
 
@@ -54,10 +55,13 @@ const Messages = ({}) => {
 
     const onSend = useCallback(() => {
         let textForSend = `${messageForSend}`
-        setMessageForSend('')
-        websocket.send(ACTIONS.SEND_MESSAGE, {
-            message: textForSend
-        })
+
+        if (textForSend.trim().length > 0) {
+            setMessageForSend('')
+            websocket.send(ACTIONS.SEND_MESSAGE, {
+                message: textForSend
+            })
+        }
     }, [messageForSend])
 
     const handleKeyDown = useCallback(
@@ -92,6 +96,38 @@ const Messages = ({}) => {
         setOpened(false)
     }, [])
 
+    useEffect(() => {
+        let unsub = websocket.subscribe(ACTIONS.UPDATE_USERS_LOGINS, (users) => {
+            setUserLogins((prev) => {
+                let newArr = [...prev]
+
+                users.forEach((user) => {
+                    if (!newArr.find((_user) => _user.id == user.id)) {
+                        newArr.push(user)
+                    }
+                })
+
+                return newArr
+            })
+        })
+
+        return () => {
+            unsub()
+        }
+    }, [])
+
+    useEffect(() => {
+        let allUsersIds = messages.map((message) => message.authorId)
+        let unknownUsersIds = allUsersIds.filter((id) => {
+            let user = userLogins.find((user) => user.id == id)
+            return !user
+        })
+
+        if (unknownUsersIds.length > 0) {
+            websocket.send(ACTIONS.CALL_UPDATE_USERS_LOGINS, unknownUsersIds)
+        }
+    }, [userLogins, messages])
+
     if (opened) {
         return (
             <div className="openedBlockContainer">
@@ -102,7 +138,7 @@ const Messages = ({}) => {
                 </div>
                 <div className="messagesContainer">
                     {messages.map((message) => {
-                        return <Message message={message} key={message.id} />
+                        return <Message message={message} key={message.id} userLogins={userLogins} />
                     })}
                     <div ref={elementRef} />
                 </div>
