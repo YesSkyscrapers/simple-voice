@@ -102,7 +102,6 @@ const start = (
         changeActive = true
         let newChannel = 3 - currentChannel
         setTimeout(() => {
-            console.log(newChannel)
             if (stops[3 - newChannel]) {
                 stops[3 - newChannel]()
             }

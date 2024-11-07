@@ -5,6 +5,7 @@ import Rooms from './routes/rework/rooms/Rooms'
 import Room from './routes/rework/room/Room'
 import TestSound from './routes/rework/testsound/TestSound'
 import Permission from './routes/rework/permission/Permission'
+import Info from './routes/rework/info/Info'
 
 const ROUTES = {
     MAIN: '/',
@@ -19,27 +20,27 @@ const router = createBrowserRouter(
     [
         {
             path: ROUTES.MAIN,
-            element: <Main />
+            element: <Info />
         },
         {
             path: ROUTES.AUTH,
-            element: <Auth />
+            element: <Info />
         },
         {
             path: ROUTES.ROOMS,
-            element: <Rooms />
+            element: <Info />
         },
         {
             path: ROUTES.ROOM,
-            element: <Room />
+            element: <Info />
         },
         {
             path: ROUTES.TEST_SOUND,
-            element: <TestSound />
+            element: <Info />
         },
         {
             path: ROUTES.PERMISSION,
-            element: <Permission />
+            element: <Info />
         }
     ],
     {

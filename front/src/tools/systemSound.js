@@ -17,9 +17,17 @@ const SOUND_MAPPING = {
     [SOUNDS.NEW_MESSAGE]: NewMessageSound
 }
 
+const SOUND_VOLUME_MAPPING = {
+    [SOUNDS.EXIT]: 1,
+    [SOUNDS.JOIN]: 1,
+    [SOUNDS.NEWENTER]: 1,
+    [SOUNDS.NEW_MESSAGE]: 0.3
+}
+
 const play = (sound) => {
     try {
         let audio = new Audio(SOUND_MAPPING[sound])
+        audio.volume = SOUND_VOLUME_MAPPING[sound]
         audio.play().catch((err) => {})
     } catch (err) {}
 }
